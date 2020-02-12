@@ -1,9 +1,13 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:loja_virtual/datas/cart_product.dart';
 import 'package:loja_virtual/datas/produto_data.dart';
+import 'package:loja_virtual/models/cart_model.dart';
+import 'package:loja_virtual/models/user_model.dart';
+import 'package:loja_virtual/screens/auth/login_screen.dart';
+import 'package:loja_virtual/screens/cart_screen.dart';
 
 class ProdutoScreen extends StatefulWidget {
-
   final ProdutoData produto;
 
   ProdutoScreen(this.produto);
@@ -13,7 +17,6 @@ class ProdutoScreen extends StatefulWidget {
 }
 
 class _ProdutoScreenState extends State<ProdutoScreen> {
-
   final ProdutoData produto;
 
   String size;
@@ -22,7 +25,6 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final Color primaryColor = Theme.of(context).primaryColor;
 
     return Scaffold(
@@ -35,7 +37,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
           AspectRatio(
             aspectRatio: 0.9,
             child: Carousel(
-              images: produto.images.map((url){
+              images: produto.images.map((url) {
                 return NetworkImage(url);
               }).toList(),
               dotSize: 8,
@@ -50,29 +52,24 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text(produto.title,
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w500
-                  ),
+                Text(
+                  produto.title,
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
                   maxLines: 3,
                 ),
                 Text(
                   "R\$ ${produto.price.toStringAsFixed(2)}",
                   style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor
-                  ),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor),
                 ),
-                SizedBox(height: 16,),
-
+                SizedBox(
+                  height: 16,
+                ),
                 Text(
                   "Tamanho",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 SizedBox(
                   height: 34,
@@ -84,7 +81,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                       mainAxisSpacing: 8,
                       childAspectRatio: 0.5,
                     ),
-                    children: produto.sizes.map((s){
+                    children: produto.sizes.map((s) {
                       return GestureDetector(
                         onTap: () {
                           setState(() {
@@ -93,12 +90,13 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                            border: Border.all(
-                              color: s == size ? primaryColor : Colors.grey[500],
-                              width: 3
-                            )
-                          ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(4)),
+                              border: Border.all(
+                                  color: s == size
+                                      ? primaryColor
+                                      : Colors.grey[500],
+                                  width: 3)),
                           width: 50,
                           alignment: Alignment.center,
                           child: Text(s),
@@ -108,24 +106,43 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: 44,
-                  child: RaisedButton(
-                    onPressed: size == null ? null : () {
-
-                    },
-                    color: primaryColor,
-                    child: Text("Adicionar ao Carrinho",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white
-                      ),
-                    ),
-                    
-                  )
+                  height: 10,
                 ),
-              
-                SizedBox(height: 16,),
-                Text(produto.description,
+                SizedBox(
+                    height: 44,
+                    child: RaisedButton(
+                      onPressed: size == null
+                          ? null
+                          : () {
+                              if (UserModel.of(context).isLoggedIn()) {
+                                CartProduct cartProduct = CartProduct();
+                                cartProduct.size = size;
+                                cartProduct.quantity = 1;
+                                cartProduct.pid = produto.id;
+                                cartProduct.category = produto.category;
+
+                                CartModel.of(context).addCartItem(cartProduct);
+
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => CartScreen()));
+                              } else {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => LoginScreen()));
+                              }
+                            },
+                      color: primaryColor,
+                      child: Text(
+                        UserModel.of(context).isLoggedIn()
+                            ? "Adicionar ao Carrinho"
+                            : 'Entre para Comprar',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    )),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  produto.description,
                   style: TextStyle(fontSize: 12),
                 ),
               ],

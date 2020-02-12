@@ -4,7 +4,6 @@ import 'package:loja_virtual/datas/produto_data.dart';
 import 'package:loja_virtual/tiles/produto_tile.dart';
 
 class CategoriaScreen extends StatelessWidget {
-
   final DocumentSnapshot snapshot;
 
   CategoriaScreen(this.snapshot);
@@ -14,55 +13,67 @@ class CategoriaScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(snapshot.data['title']),
-          centerTitle: true,
-          bottom: TabBar(
-            indicatorColor: Colors.white,
-            tabs: <Widget>[
-              Tab(icon: Icon(Icons.grid_on),),
-              Tab(icon: Icon(Icons.list,)),
-            ],
+          appBar: AppBar(
+            title: Text(snapshot.data['title']),
+            centerTitle: true,
+            bottom: TabBar(
+              indicatorColor: Colors.white,
+              tabs: <Widget>[
+                Tab(
+                  icon: Icon(Icons.grid_on),
+                ),
+                Tab(
+                    icon: Icon(
+                  Icons.list,
+                )),
+              ],
+            ),
           ),
-        ),
-        body: FutureBuilder<QuerySnapshot>(
-          future: Firestore.instance.collection('products').document(snapshot.documentID)
-            .collection('items').getDocuments(),
-          builder: (context, snapshot){
-            
-            if(!snapshot.hasData){
-              return Center(child: CircularProgressIndicator(),);
-            } else {
-              return TabBarView(
-                physics: NeverScrollableScrollPhysics(),
-                children: <Widget>[
-                  GridView.builder(
-                    padding: EdgeInsets.all(4),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 4,
-                      crossAxisSpacing: 4,
-                      childAspectRatio: 0.65
+          body: FutureBuilder<QuerySnapshot>(
+            future: Firestore.instance
+                .collection('products')
+                .document(snapshot.documentID)
+                .collection('items')
+                .getDocuments(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return TabBarView(
+                  physics: NeverScrollableScrollPhysics(),
+                  children: <Widget>[
+                    GridView.builder(
+                      padding: EdgeInsets.all(4),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 4,
+                          crossAxisSpacing: 4,
+                          childAspectRatio: 0.65),
+                      itemCount: snapshot.data.documents.length,
+                      itemBuilder: (context, index) {
+                        ProdutoData data = ProdutoData.fromDocument(
+                            snapshot.data.documents[index]);
+                        data.category = this.snapshot.documentID;
+                        return ProdutoTile('grid', data);
+                      },
                     ),
-                    itemCount: snapshot.data.documents.length,
-                    itemBuilder: (context, index){
-                      return ProdutoTile('grid', ProdutoData.fromDocument(snapshot.data.documents[index]));
-                    },
-                  ),
-                 
-                  ListView.builder(
-                    padding: EdgeInsets.all(4),
-                    itemCount: snapshot.data.documents.length,
-                    itemBuilder: (context, index){
-                      return ProdutoTile('row', ProdutoData.fromDocument(snapshot.data.documents[index]));
-                    },
-                  ),
-                ],
-              );
-            }
-          },
-        )
-      ),
+                    ListView.builder(
+                      padding: EdgeInsets.all(4),
+                      itemCount: snapshot.data.documents.length,
+                      itemBuilder: (context, index) {
+                        ProdutoData data = ProdutoData.fromDocument(
+                            snapshot.data.documents[index]);
+                        data.category = this.snapshot.documentID;
+                        return ProdutoTile('row', data);
+                      },
+                    ),
+                  ],
+                );
+              }
+            },
+          )),
     );
   }
 }

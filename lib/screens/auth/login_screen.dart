@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
     void _onSuccess() {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
-          content: Text('Usuário criado com sucesso'),
+          content: Text('Login efetuado com sucesso'),
           backgroundColor: Theme.of(context).primaryColor,
           duration: Duration(seconds: 2),
         ),
@@ -29,14 +29,14 @@ class LoginScreen extends StatelessWidget {
     void _onFail() {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
-          content: Text('Falha ao criar usuário'),
+          content: Text('Falha ao logar'),
           backgroundColor: Colors.redAccent,
           duration: Duration(seconds: 2),
         ),
       );
 
       Future.delayed(Duration(seconds: 2)).then((_) {
-        Navigator.of(context).pop();
+        //Navigator.of(context).pop();
       });
     }
 
