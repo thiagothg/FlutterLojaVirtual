@@ -86,6 +86,7 @@ class UserModel extends Model {
             .collection('users')
             .document(firebaseUser.uid)
             .get();
+            
         userData = docUser.data;
       }
     }

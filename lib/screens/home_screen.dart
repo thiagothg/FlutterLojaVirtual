@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loja_virtual/tabs/home_tab.dart';
+import 'package:loja_virtual/tabs/orders_tab.dart';
 import 'package:loja_virtual/tabs/produtos_tab.dart';
 import 'package:loja_virtual/widgets/cart_button.dart';
 import 'package:loja_virtual/widgets/custom_drawer.dart';
@@ -42,12 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Scaffold(
           appBar: AppBar(
-            title: Text('Meus Produtos'),
+            title: Text('Meus Pedidos'),
             centerTitle: true,
           ),
-          body: Container(),
+          body: OrderTab(),
           drawer: CustomDrawer(_pageController),
-        ),
+        )
       ],
     );
   }
